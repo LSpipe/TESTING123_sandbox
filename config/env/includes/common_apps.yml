@@ -1,20 +1,54 @@
-# Copyright (c) 2013 Shotgun Software Inc.
-# 
-# CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
-# Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
-# not expressly granted therein are reserved by Shotgun Software Inc.
-#
-#
-# This file contains commonly used apps.
-#
-
 about:
   location: {name: tk-multi-about, type: app_store, version: v0.1.20}
-
+frameworks:
+  tk-framework-qtwidgets_v1.x.x:
+    location: {name: tk-framework-qtwidgets, type: app_store, version: v1.0.1}
+  tk-framework-shotgunutils_v2.x.x:
+    location: {name: tk-framework-shotgunutils, type: app_store, version: v2.0.5}
+  tk-framework-widget_v0.1.18:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.18}
+  tk-framework-widget_v0.1.20:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.20}
+  tk-framework-widget_v0.1.23:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.23}
+  tk-framework-widget_v0.1.24:
+    location: {name: tk-framework-widget, type: app_store, version: v0.1.24}
+  tk-framework-widget_v0.2.x:
+    location: {name: tk-framework-widget, type: app_store, version: v0.2.2}
+tk-custom-loader:
+  action_mappings:
+    Maya Scene: [reference, import]
+    Photoshop Image: [texture_node]
+    Rendered Image: [texture_node]
+    UDIM Image: [udim_texture_node]
+  actions_hook: '{self}/tk-maya_actions.py'
+  download_thumbnails: true
+  entities:
+  - caption: Assets
+    entity_type: Asset
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_asset_type, code]
+    publish_filters: []
+  - caption: Shots
+    entity_type: Shot
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_sequence, code]
+    publish_filters: []
+  - caption: My Tasks
+    entity_type: Task
+    filters:
+    - [task_assignees, is, '{context.user}']
+    - [project, is, '{context.project}']
+    hierarchy: [entity, content]
+    publish_filters: []
+  filter_publishes_hook: '{self}/filter_publishes.py'
+  location: {path: 'N:\software\shotgun\TESTING123_sandbox\install\apps\tk-custom-loader',
+    type: dev}
+  menu_name: Custom Load
+  publish_filters: []
+  title_name: Custom Loader
 workfiles:
   allow_task_creation: true
   file_extensions: []
@@ -36,7 +70,6 @@ workfiles:
   template_publish_area: null
   template_work: null
   template_work_area: null
-  
 workfiles-launch-at-startup:
   allow_task_creation: true
   file_extensions: []
@@ -58,20 +91,3 @@ workfiles-launch-at-startup:
   template_publish_area: null
   template_work: null
   template_work_area: null
-
-frameworks:
-  tk-framework-qtwidgets_v1.x.x:
-    location: {name: tk-framework-qtwidgets, type: app_store, version: v1.0.1}
-  tk-framework-shotgunutils_v2.x.x:
-    location: {name: tk-framework-shotgunutils, type: app_store, version: v2.0.5}
-  tk-framework-widget_v0.1.18:
-    location: {name: tk-framework-widget, type: app_store, version: v0.1.18}
-  tk-framework-widget_v0.1.20:
-    location: {name: tk-framework-widget, type: app_store, version: v0.1.20}
-  tk-framework-widget_v0.1.23:
-    location: {name: tk-framework-widget, type: app_store, version: v0.1.23}
-  tk-framework-widget_v0.1.24:
-    location: {name: tk-framework-widget, type: app_store, version: v0.1.24}
-  tk-framework-widget_v0.2.x:
-    location: {name: tk-framework-widget, type: app_store, version: v0.2.2}
-  
