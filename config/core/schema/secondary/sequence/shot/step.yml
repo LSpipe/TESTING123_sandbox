@@ -14,4 +14,4 @@ type: "shotgun_step"
 # the shotgun field to use for the folder name
 name: "short_name"
 
-filters: [ { "path": "short_name", "relation": "is_not", "values": [ "Comp" ] } ]
+filters: [ { "path": "short_name", "relation": "is", "values": [ "Comp" ] } ]
