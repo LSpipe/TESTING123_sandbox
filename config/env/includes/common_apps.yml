@@ -17,7 +17,7 @@ frameworks:
     location: {name: tk-framework-widget, type: app_store, version: v0.2.2}
 tk-custom-loader:
   action_mappings:
-    Maya Scene: [reference, import]
+    Maya Scene: [open, reference, import]
     Photoshop Image: [texture_node]
     Rendered Image: [texture_node]
     UDIM Image: [udim_texture_node]
@@ -43,12 +43,74 @@ tk-custom-loader:
     - [project, is, '{context.project}']
     hierarchy: [entity, content]
     publish_filters: []
+  - caption: Masters
+    entity_type: Asset
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_asset_type, code]
+    publish_filters:
+    - [task.Task.step.Step.short_name, is_not, 'Model']
+    - [task.Task.step.Step.short_name, is_not, 'Tex']
+    - [task.Task.step.Step.short_name, is_not, 'Rig']
   filter_publishes_hook: '{self}/filter_publishes.py'
   location: {path: 'N:\software\shotgun\TESTING123_sandbox\install\apps\tk-custom-loader',
     type: dev}
-  menu_name: Custom Load
+  menu_name: Loader
+  assetPublishPathTemplate: maya_asset_publish
+  assetWorkPathTemplate: maya_asset_work
+  shotPublishPathTemplate: maya_shot_publish
+  shotWorkPathTemplate: maya_shot_work
   publish_filters: []
-  title_name: Custom Loader
+  title_name: Loader
+
+tk-custom-loader-launch-at-startup:
+  action_mappings:
+    Maya Scene: [open, reference, import]
+    Photoshop Image: [texture_node]
+    Rendered Image: [texture_node]
+    UDIM Image: [udim_texture_node]
+  actions_hook: '{self}/tk-maya_actions.py'
+  download_thumbnails: true
+  entities:
+  - caption: Assets
+    entity_type: Asset
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_asset_type, code]
+    publish_filters: []
+  - caption: Shots
+    entity_type: Shot
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_sequence, code]
+    publish_filters: []
+  - caption: My Tasks
+    entity_type: Task
+    filters:
+    - [task_assignees, is, '{context.user}']
+    - [project, is, '{context.project}']
+    hierarchy: [entity, content]
+    publish_filters: []
+  - caption: Masters
+    entity_type: Assets
+    filters:
+    - [project, is, '{context.project}']
+    hierarchy: [sg_asset_type, code]
+    publish_filters:
+    - [task.Task.step.Step.short_name, is_not, 'Model']
+    - [task.Task.step.Step.short_name, is_not, 'Tex']
+    - [task.Task.step.Step.short_name, is_not, 'Rig']
+  filter_publishes_hook: '{self}/filter_publishes.py'
+  location: {path: 'N:\software\shotgun\TESTING123_sandbox\install\apps\tk-custom-loader',
+    type: dev}
+  menu_name: Loader
+  assetPublishPathTemplate: maya_asset_publish
+  assetWorkPathTemplate: maya_asset_work
+  shotPublishPathTemplate: maya_shot_publish
+  shotWorkPathTemplate: maya_shot_work
+  publish_filters: []
+  title_name: Loader
+
 workfiles:
   allow_task_creation: true
   file_extensions: []

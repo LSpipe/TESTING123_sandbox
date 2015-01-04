@@ -24,6 +24,11 @@ from .delegate_publish_history import SgPublishHistoryDelegate
 
 from .ui.dialog import Ui_Dialog
 
+import assetInfoAttr
+reload(assetInfoAttr)
+import os, sys
+import maya.cmds as cmds
+
 # import frameworks
 shotgun_model = sgtk.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
 settings = sgtk.platform.import_framework("tk-framework-shotgunutils", "settings")
@@ -173,6 +178,63 @@ class AppDialog(QtGui.QWidget):
         self._refresh_action.triggered.connect(self._publish_model.async_refresh)
         self.ui.publish_view.addAction(self._refresh_action)
         self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        
+        # set up right click menu for the main publish view to create folders- By Vipul Jain
+        self._createFolders_action = QtGui.QAction("Create Folders", self.ui.publish_view)
+        self._createFolders_action.triggered.connect(self._createFolders_Fn)
+        self.ui.publish_view.addAction(self._createFolders_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+ 
+        self._allAssets_action = QtGui.QAction("All Assets", self.ui.publish_view)
+        self._allAssets_action.triggered.connect(self._allAssets_Fn)
+        self.ui.publish_view.addAction(self._allAssets_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+   
+        self._modelAssets_action = QtGui.QAction("Model Assets", self.ui.publish_view)
+        self._modelAssets_action.triggered.connect(self._modelAssets_Fn)
+        self.ui.publish_view.addAction(self._modelAssets_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+   
+        self._surfaceAssets_action = QtGui.QAction("Surface Assets", self.ui.publish_view)
+        self._surfaceAssets_action.triggered.connect(self._surfaceAssets_Fn)
+        self.ui.publish_view.addAction(self._surfaceAssets_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+   
+        self._rigAssets_action = QtGui.QAction("Rig Assets", self.ui.publish_view)
+        self._rigAssets_action.triggered.connect(self._rigAssets_Fn)
+        self.ui.publish_view.addAction(self._rigAssets_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+        self._assemblyDefAssets_action = QtGui.QAction("Assembly Def Assets", self.ui.publish_view)
+        self._assemblyDefAssets_action.triggered.connect(self._assemblyDefAssets_Fn)
+        self.ui.publish_view.addAction(self._assemblyDefAssets_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+        self._allShots_action = QtGui.QAction("All Shots", self.ui.publish_view)
+        self._allShots_action.triggered.connect(self._allShots_Fn)
+        self.ui.publish_view.addAction(self._allShots_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+  
+        self._layoutShots_action = QtGui.QAction("Layout Shots", self.ui.publish_view)
+        self._layoutShots_action.triggered.connect(self._layoutShots_Fn)
+        self.ui.publish_view.addAction(self._layoutShots_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+  
+        self._animShots_action = QtGui.QAction("Anim Shots", self.ui.publish_view)
+        self._animShots_action.triggered.connect(self._animShots_Fn)
+        self.ui.publish_view.addAction(self._animShots_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+  
+        self._fxShots_action = QtGui.QAction("FX Shots", self.ui.publish_view)
+        self._fxShots_action.triggered.connect(self._fxShots_Fn)
+        self.ui.publish_view.addAction(self._fxShots_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+        self._lightShots_action = QtGui.QAction("Light Shots", self.ui.publish_view)
+        self._lightShots_action.triggered.connect(self._lightShots_Fn)
+        self.ui.publish_view.addAction(self._lightShots_action)
+        self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
 
         #################################################
         # checkboxes, buttons etc
@@ -1161,6 +1223,115 @@ class AppDialog(QtGui.QWidget):
         # qt returns unicode/qstring here so force to str
         curr_tab_name = shotgun_model.sanitize_qt(self.ui.entity_preset_tabs.tabText(new_index))
 
+        if curr_tab_name == 'Assets':
+            #    remove actions before adding any new actions
+            self.ui.publish_view.removeAction(self._allAssets_action)
+            self.ui.publish_view.removeAction(self._modelAssets_action)
+            self.ui.publish_view.removeAction(self._surfaceAssets_action)
+            self.ui.publish_view.removeAction(self._rigAssets_action)
+            self.ui.publish_view.removeAction(self._assemblyDefAssets_action)
+
+            self.ui.publish_view.removeAction(self._allShots_action)
+            self.ui.publish_view.removeAction(self._layoutShots_action)
+            self.ui.publish_view.removeAction(self._animShots_action)
+            self.ui.publish_view.removeAction(self._fxShots_action)
+            self.ui.publish_view.removeAction(self._lightShots_action)
+
+            self._allAssets_action = QtGui.QAction("All Assets", self.ui.publish_view)
+            self._allAssets_action.triggered.connect(self._allAssets_Fn)
+            self.ui.publish_view.addAction(self._allAssets_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._modelAssets_action = QtGui.QAction("Model Assets", self.ui.publish_view)
+            self._modelAssets_action.triggered.connect(self._modelAssets_Fn)
+            self.ui.publish_view.addAction(self._modelAssets_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._surfaceAssets_action = QtGui.QAction("Surface Assets", self.ui.publish_view)
+            self._surfaceAssets_action.triggered.connect(self._surfaceAssets_Fn)
+            self.ui.publish_view.addAction(self._surfaceAssets_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._rigAssets_action = QtGui.QAction("Rig Assets", self.ui.publish_view)
+            self._rigAssets_action.triggered.connect(self._rigAssets_Fn)
+            self.ui.publish_view.addAction(self._rigAssets_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+            self._assemblyDefAssets_action = QtGui.QAction("Assembly Def Assets", self.ui.publish_view)
+            self._assemblyDefAssets_action.triggered.connect(self._rigAssets_Fn)
+            self.ui.publish_view.addAction(self._assemblyDefAssets_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+        elif curr_tab_name == 'Shots':
+            #    remove actions before adding any new actions
+
+            self.ui.publish_view.removeAction(self._allAssets_action)
+            self.ui.publish_view.removeAction(self._modelAssets_action)
+            self.ui.publish_view.removeAction(self._surfaceAssets_action)
+            self.ui.publish_view.removeAction(self._rigAssets_action)
+            self.ui.publish_view.removeAction(self._assemblyDefAssets_action)
+
+            self.ui.publish_view.removeAction(self._allShots_action)
+            self.ui.publish_view.removeAction(self._layoutShots_action)
+            self.ui.publish_view.removeAction(self._animShots_action)
+            self.ui.publish_view.removeAction(self._fxShots_action)
+            self.ui.publish_view.removeAction(self._lightShots_action)
+
+            self._allShots_action = QtGui.QAction("All shots", self.ui.publish_view)
+            self._allShots_action.triggered.connect(self._allShots_Fn)
+            self.ui.publish_view.addAction(self._allShots_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._layoutShots_action = QtGui.QAction("Layout shots", self.ui.publish_view)
+            self._layoutShots_action.triggered.connect(self._layoutShots_Fn)
+            self.ui.publish_view.addAction(self._layoutShots_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._animShots_action = QtGui.QAction("Anim shots", self.ui.publish_view)
+            self._animShots_action.triggered.connect(self._animShots_Fn)
+            self.ui.publish_view.addAction(self._animShots_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+      
+            self._fxShots_action = QtGui.QAction("FX shots", self.ui.publish_view)
+            self._fxShots_action.triggered.connect(self._fxShots_Fn)
+            self.ui.publish_view.addAction(self._fxShots_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+    
+            self._lightShots_action = QtGui.QAction("Light shots", self.ui.publish_view)
+            self._lightShots_action.triggered.connect(self._lightShots_Fn)
+            self.ui.publish_view.addAction(self._lightShots_action)
+            self.ui.publish_view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+
+        elif curr_tab_name == 'Audio':
+            #    remove actions before adding any new actions
+
+            self.ui.publish_view.removeAction(self._allAssets_action)
+            self.ui.publish_view.removeAction(self._modelAssets_action)
+            self.ui.publish_view.removeAction(self._surfaceAssets_action)
+            self.ui.publish_view.removeAction(self._rigAssets_action)
+            self.ui.publish_view.removeAction(self._assemblyDefAssets_action)
+
+            self.ui.publish_view.removeAction(self._allShots_action)
+            self.ui.publish_view.removeAction(self._layoutShots_action)
+            self.ui.publish_view.removeAction(self._animShots_action)
+            self.ui.publish_view.removeAction(self._fxShots_action)
+            self.ui.publish_view.removeAction(self._lightShots_action)
+
+        else:
+            #    remove actions before adding any new actions
+
+            self.ui.publish_view.removeAction(self._allAssets_action)
+            self.ui.publish_view.removeAction(self._modelAssets_action)
+            self.ui.publish_view.removeAction(self._surfaceAssets_action)
+            self.ui.publish_view.removeAction(self._rigAssets_action)
+            self.ui.publish_view.removeAction(self._assemblyDefAssets_action)
+
+            self.ui.publish_view.removeAction(self._allShots_action)
+            self.ui.publish_view.removeAction(self._layoutShots_action)
+            self.ui.publish_view.removeAction(self._animShots_action)
+            self.ui.publish_view.removeAction(self._fxShots_action)
+            self.ui.publish_view.removeAction(self._lightShots_action)
+
         # and set up which our currently visible preset is
         self._current_entity_preset = curr_tab_name
 
@@ -1367,6 +1538,877 @@ class AppDialog(QtGui.QWidget):
         breadcrumbs = " <span style='color:#2C93E2'>&#9656;</span> ".join( crumbs[::-1] )
 
         self.ui.entity_breadcrumbs.setText("<big>%s</big>" % breadcrumbs)
+
+    def _createFolders_Fn(self):
+        if self._publish_model._ShotgunModel__all_tree_items:
+            print 'file already exists'
+        else:
+            selectedItem = self._get_selected_entity()
+            if selectedItem:
+                entityType = selectedItem.get_sg_data()['type']
+                app = sgtk.platform.current_bundle()
+                if entityType == 'Shot':
+                    entityId = selectedItem.get_sg_data()['id']
+                    tk = sgtk.sgtk_from_path('N:/software/shotgun/TESTING123_sandbox')
+                    tk.create_filesystem_structure(entityType, entityId)
+                    self.shotPublishPath = tk.templates[app.get_setting('shotPublishPathTemplate')]
+                    self.shotFields = {}
+                    self.shotFields['Sequence'] = selectedItem.get_sg_data()['sg_sequence']['name']
+                    self.shotFields['Shot'] = selectedItem.get_sg_data()['code']
+                    self.shotFields['name'] = selectedItem.get_sg_data()['code'].replace('_', '')
+                    self.shotFields['version'] = 000
+                    tasks = tk.shotgun.find_one('Shot', [['id', 'is', selectedItem.get_sg_data()['id']]], fields = ['tasks'])['tasks']
+                    for each in tasks:
+                        if each['name'] != 'StoryBoard' and each['name'] != 'Comp' and each['name'] != 'Additional Fx':
+                            if each['name'] == 'Layout':
+                                self.shotFields['Step'] = 'Blck'
+                                publishPath = self.shotPublishPath.apply_fields(self.shotFields)
+                                self.shotFields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'LAYOUT'
+                            elif each['name'] == 'FX':
+                                self.shotFields['Step'] = 'FX'
+                                self.shotFields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'FX'
+                                publishPath = self.shotPublishPath.apply_fields(self.shotFields)
+                            elif each['name'] == 'Anm':
+                                self.shotFields['Step'] = 'Anm'
+                                self.shotFields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'ANIM'
+                                publishPath = self.shotPublishPath.apply_fields(self.shotFields)
+                            elif each['name'] == 'Light':
+                                self.shotFields['Step'] = 'Light'
+                                self.shotFields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'LIGHT'
+                                publishPath = self.shotPublishPath.apply_fields(self.shotFields)
+                            else:
+                                pass
+                            if not os.path.exists(publishPath):
+                                ctx = tk.context_from_path(publishPath)
+                                fileName = '%s.v000.mb' % self.shotFields['name']
+                                sgtk.util.register_publish(tk, ctx, publishPath, fileName, self.shotFields['version'], task=each, published_file_type='Maya Scene')
+                                cmds.file(new=1, f=1)
+                                cmds.file(rename = publishPath)
+                                cmds.file(save=1, f=1)
+                            else:
+                                "File Already exists"
+                elif entityType == 'Asset':
+                    entityId = selectedItem.get_sg_data()['id']
+                    tk = sgtk.sgtk_from_path('N:/software/shotgun/TESTING123_sandbox')
+                    tk.create_filesystem_structure(entityType, entityId)
+                    self.assetPublishPath = tk.templates[app.get_setting('assetPublishPathTemplate')]
+                    self.fields = {}
+                    self.fields['sg_asset_type'] = selectedItem.get_sg_data()['sg_asset_type']
+                    self.fields['Asset'] = selectedItem.get_sg_data()['code']
+                    self.fields['name'] = selectedItem.get_sg_data()['code'].replace('_', '')
+                    self.fields['version'] = 000
+                    tasks = tk.shotgun.find_one('Asset', [['id', 'is', selectedItem.get_sg_data()['id']]], fields = ['tasks'])['tasks']
+                    for each in tasks:
+                        if each['name'] != 'Art' and each['name'] != 'Master':
+                            if each['name'] == 'Model':
+                                self.fields['Step'] = 'Model'
+                                self.fields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + each["name"]
+                                publishPath = self.assetPublishPath.apply_fields(self.fields)
+                                print publishPath
+                            elif each['name'] == 'Rig':
+                                self.fields['Step'] = 'Rig'
+                                self.fields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + each["name"]
+                                publishPath = self.assetPublishPath.apply_fields(self.fields)
+                            elif each['name'] == 'Surface':
+                                self.fields['Step'] = 'Tex'
+                                self.fields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'Tex'
+                                publishPath = self.assetPublishPath.apply_fields(self.fields)
+#                             elif each['name'] == 'Assembly Reference':
+#                                 self.fields['Step'] = 'ADEF'
+#                                 self.fields['name'] = selectedItem.get_sg_data()['code'].replace('_', '') + 'ADEF'
+#                                 publishPath = self.assetPublishPath.apply_fields(self.fields)
+                            else:
+                                pass
+                            if not os.path.exists(publishPath):
+                                ctx = tk.context_from_path(publishPath)
+                                fileName = self.fields['name']
+#                                 fileName = '%s.v000.mb' % self.fields['name']
+                                sgtk.util.register_publish(tk, ctx, publishPath, fileName, self.fields['version'], task = each,  published_file_type = 'Maya Scene')
+                                if self.fields['sg_asset_type'] == 'Environment':
+                                    if each['name'] == "Model":
+                                        cmds.file(new=1, f=1)
+                                        assetInfoAttr_Var = assetInfoAttr.AssetInfoAttr()
+                                        lodHighGroup = cmds.group(n='%s_LODhigh_hrc' % selectedItem.get_sg_data()['code'], em=1)
+                                        assetInfoAttr_Var.assetNameAttr(selectedItem.get_sg_data()['code'], lodHighGroup)
+                                        assetInfoAttr_Var.assetTaskAttr(each['name'], lodHighGroup)
+                                        assetInfoAttr_Var.assetTypeAttr(selectedItem.get_sg_data()['sg_asset_type'], lodHighGroup)
+                                        assetInfoAttr_Var.assetIdAttr(selectedItem.get_sg_data()['id'], lodHighGroup)
+    #                                     assetInfoAttr_Var.assetTaskIdAttr(self.assetTaskId, lodHighGroup)
+                                        assetInfoAttr_Var.assetLODTypeAttr('High', lodHighGroup)
+                                        cmds.lockNode(l=1)
+                                        cmds.select(cl=1)
+    
+                                        lodLowGroup = cmds.group(n='%s_LODlow_hrc' % selectedItem.get_sg_data()['code'], em=1)
+                                        assetInfoAttr_Var.assetNameAttr(selectedItem.get_sg_data()['code'], lodLowGroup)
+                                        assetInfoAttr_Var.assetTaskAttr(each['name'], lodLowGroup)
+                                        assetInfoAttr_Var.assetTypeAttr(selectedItem.get_sg_data()['sg_asset_type'], lodLowGroup)
+                                        assetInfoAttr_Var.assetIdAttr(selectedItem.get_sg_data()['id'], lodLowGroup)
+    #                                     assetInfoAttr_Var.assetTaskIdAttr(self.assetTaskId, lodLowGroup)
+                                        assetInfoAttr_Var.assetLODTypeAttr('Low', lodLowGroup)
+                                        cmds.lockNode(l=1)
+                                        cmds.select(cl=1)
+                                        cmds.file(rename = publishPath)
+                                        cmds.file(s=1, f=1)
+                                    else:
+                                        cmds.file(new=1, f=1)
+                                        cmds.file(rename = publishPath)
+                                        cmds.file(s=1, f=1)
+                                else:
+                                    cmds.file(new=1, f=1)
+                                    cmds.file(rename = publishPath)
+                                    cmds.file(s=1, f=1)
+                            else:
+                                "File Already exists"
+                    cmds.confirmDialog(title='Folders created confirmation', m='Folders created and the default files are also published', defaultButton='Ok')
+            else:
+                print "Select proper asset/shot please"
+
+    def _allAssets_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+        publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _allShots_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+        publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+#         publish_filters = [['name', 'not_contains', '']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _modelAssets_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+        #         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        #         if publish_filters == None:
+        publish_filters = [['name', 'contains', 'Mdl']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _surfaceAssets_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        else:
+            # we got a specific item to process!
+
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+#         if publish_filters == None:
+        publish_filters = [['name', 'contains', 'Tex']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+           
+    def _rigAssets_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        else:
+            # we got a specific item to process!
+
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+#         if publish_filters == None:
+        publish_filters = [['name', 'contains', 'RIG']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+################################################################################################
+# Helper stuff
+
+    def _assemblyDefAssets_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        else:
+            # we got a specific item to process!
+
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+#         if publish_filters == None:
+        publish_filters = [['name', 'contains', 'ADEF']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _animShots_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        publish_filters = [['name', 'contains', 'ANIM']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _layoutShots_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        publish_filters = [['name', 'contains', 'LAYOUT']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _lightShots_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        publish_filters = [['name', 'contains', 'LIGHT']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
+    def _fxShots_Fn(self):
+        """
+        Given an item from the treeview, or None if no item
+        is selected, prepare the publish area UI.
+        """
+        
+        # clear selection. If we don't clear the model at this point,
+        # the selection model will attempt to pair up with the model is
+        # data is being loaded in, resulting in many many events
+        item = self._get_selected_entity()
+        self.ui.publish_view.selectionModel().clear()
+        
+        # Determine the child folders.
+        child_folders = []
+        proxy_model = self._entity_presets[self._current_entity_preset].proxy_model
+        
+        if item is None:
+            # nothing is selected, bring in all the top level
+            # objects in the current tab
+            num_children = proxy_model.rowCount()
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = proxy_model.index(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        else:
+            # we got a specific item to process!
+        
+            # now get the proxy model level item instead - this way we can take search into
+            # account as we show the folder listings.
+            root_model_idx = item.index()
+            root_model_idx_proxy = proxy_model.mapFromSource(root_model_idx)
+            num_children = proxy_model.rowCount(root_model_idx_proxy)
+        
+            # get all the folder children - these need to be displayed
+            # by the model as folders
+        
+            for x in range(num_children):
+                # get the (proxy model) index for the child
+                child_idx_proxy = root_model_idx_proxy.child(x,0)
+                # switch to shotgun model index
+                child_idx = proxy_model.mapToSource(child_idx_proxy)
+                # resolve the index into an actual standarditem object
+                i = self._entity_presets[self._current_entity_preset].model.itemFromIndex(child_idx)
+                child_folders.append(i)
+        
+        # is the show child folders checked?
+        show_sub_items = self.ui.show_sub_items.isChecked()
+        
+        if show_sub_items:
+            # indicate this with a special background color
+            self.ui.publish_view.setStyleSheet("#publish_view { background-color: rgba(44, 147, 226, 20%); }")
+            if len(child_folders) > 0:
+                # delegates are rendered in a special way
+                # if we are on a non-leaf node in the tree (e.g there are subfolders)
+                self._publish_delegate.show_entity_instead_of_type(True)
+            else:
+                # we are at leaf level and the subitems check box is checked
+                # render the cells
+                self._publish_delegate.show_entity_instead_of_type(False)
+        else:
+            self.ui.publish_view.setStyleSheet("")
+            self._publish_delegate.show_entity_instead_of_type(False)
+        
+        # now finally load up the data in the publish model
+#         publish_filters = self._entity_presets[self._current_entity_preset].publish_filters
+        publish_filters = [['name', 'contains', 'FX']]
+        self._publish_model.load_data(item, child_folders, show_sub_items, publish_filters)
+
 
 
 ################################################################################################

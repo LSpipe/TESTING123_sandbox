@@ -121,6 +121,10 @@ paths:
     shot_root: sequences/{Sequence}/{Shot}/{Step}
     asset_root: assets/{sg_asset_type}/{Asset}/{Step}
     sequence_root: sequences/{Sequence}
+    playblast_root: sequences/{Sequence}/{Shot}
+    
+    # Custom asset root
+    asset_master_root: assets/{sg_asset_type}/{Asset}
 
     ##########################################################################################
     # Project level paths 
@@ -171,20 +175,33 @@ paths:
     #
 
     # define the location of a work area
-    shot_work_area_maya: '@shot_root/work/maya'
-    
+    shot_work_area_maya: 
+        definition: '@shot_root/work/maya'
+        root_name: primary
+
     # define the location of a publish area
-    shot_publish_area_maya: '@shot_root/publish/maya'
+    shot_publish_area_maya: 
+        definition: '@shot_root/publish/maya'
+        root_name: primary
 
     # The location of WIP files
-    maya_shot_work: '@shot_root/work/maya/{name}.v{version}.ma'
+    maya_shot_work: 
+        definition: '@shot_root/work/maya/{name}.v{version}.ma'
+        root_name: primary
 
     # The location of backups of WIP files
-    maya_shot_snapshot: '@shot_root/work/maya/snapshots/{name}.v{version}.{timestamp}.ma'
+    maya_shot_snapshot: 
+        definition: '@shot_root/work/maya/snapshots/{name}.v{version}.{timestamp}.ma'
+        root_name: primary
 
     # The location of published maya files
-    maya_shot_publish: '@shot_root/publish/maya/{name}.v{version}.ma'
+    maya_shot_publish: 
+        definition: '@shot_root/publish/maya/{name}.v{version}.mb'
+        root_name: primary
 
+    maya_shot_playblast: 
+        definition: '@playblast_root/Reviews/{Step}/work/R{version}/{name}.v{version}.mov'
+        root_name: secondary
 
     #
     # Houdini
@@ -357,8 +374,13 @@ paths:
     maya_asset_snapshot: '@asset_root/work/maya/snapshots/{name}.v{version}.{timestamp}.ma'
 
     # The location of published maya files
-    maya_asset_publish: '@asset_root/publish/maya/{name}.v{version}.ma'
+    maya_asset_publish: '@asset_root/publish/maya/{name}.v{version}.mb'
 
+    # Custom templates
+    
+    # The location of master assets
+    maya_asset_master_publish: '@asset_master_root/Master/publish/maya/{Asset}_master.v{version}.mb'
+    maya_asset_master_work: '@asset_master_root/Master/work/maya/{Asset}_master.v{version}.ma'
 
     #
     # Houdini

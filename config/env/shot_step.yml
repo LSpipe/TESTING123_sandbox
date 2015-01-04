@@ -266,15 +266,20 @@ engines:
     
   tk-maya:
     apps:
+      tk-maya-playblast:
+        export_movie_template: maya_shot_playblast
+        tank_address_field: N:/software/shotgun/TESTING123_sandbox
+        location: {path: 'N:\software\shotgun\TESTING123_sandbox\install\apps\tk-maya-playblast\v3.1.0', type: dev}
       tk-multi-breakdown:
         hook_scene_operations: '{self}/tk-maya_scene_operations.py'
         location: {name: tk-multi-breakdown, type: app_store, version: v1.1.1}
       tk-multi-about: '@about'
-      tk-multi-loader2:
+      tk-custom-loader:
         action_mappings:
-          Maya Scene: [reference, import]
+          Maya Scene: [open, reference, import]
           Photoshop Image: [texture_node]
           Rendered Image: [texture_node]
+          UDIM Image: [udim_texture_node]
         actions_hook: '{self}/tk-maya_actions.py'
         download_thumbnails: true
         entities:
@@ -283,24 +288,41 @@ engines:
           filters:
           - [project, is, '{context.project}']
           hierarchy: [sg_asset_type, code]
+          publish_filters: []
         - caption: Shots
           entity_type: Shot
           filters:
           - [project, is, '{context.project}']
           hierarchy: [sg_sequence, code]
+          publish_filters: []
         - caption: My Tasks
           entity_type: Task
           filters:
           - [task_assignees, is, '{context.user}']
           - [project, is, '{context.project}']
           hierarchy: [entity, content]
+          publish_filters: []
+        - caption: Masters
+          entity_type: Asset
+          filters:
+          - [project, is, '{context.project}']
+          hierarchy: [sg_asset_type, code]
+          publish_filters:
+          - [task.Task.step.Step.short_name, is_not, 'Model']
+          - [task.Task.step.Step.short_name, is_not, 'Tex']
+          - [task.Task.step.Step.short_name, is_not, 'Rig']
         filter_publishes_hook: '{self}/filter_publishes.py'
-        location: {name: tk-multi-loader2, type: app_store, version: v1.3.0}
-        menu_name: Load
+        location: {path: 'N:\software\shotgun\TESTING123_sandbox\install\apps\tk-custom-loader',
+          type: dev}
+        menu_name: Loader
+        assetPublishPathTemplate: maya_asset_publish
+        assetWorkPathTemplate: maya_asset_work
+        shotPublishPathTemplate: maya_shot_publish
+        shotWorkPathTemplate: maya_shot_work
         publish_filters: []
         title_name: Loader
       tk-multi-publish:
-        allow_taskless_publishes: true
+        allow_taskless_publishes: false
         display_name: Publish
         expand_single_items: false
         hook_copy_file: default
@@ -339,7 +361,7 @@ engines:
         hook_filter_publishes: default
         hook_filter_work_files: default
         hook_scene_operation: default
-        launch_at_startup: true
+        launch_at_startup: false
         launch_change_work_area_at_startup: false
         location: {name: tk-multi-workfiles, type: app_store, version: v0.6.0}
         saveas_default_name: scene

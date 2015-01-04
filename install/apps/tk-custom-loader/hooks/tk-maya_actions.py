@@ -67,6 +67,12 @@ class MayaActions(HookBaseClass):
         
         action_instances = []
         
+        if "open" in actions:
+            action_instances.append( {"name": "open", 
+                                      "params": None,
+                                      "caption": "Open maya scene file", 
+                                      "description": "This will open the maya publish file."} )
+
         if "reference" in actions:
             action_instances.append( {"name": "reference", 
                                       "params": None,
@@ -112,6 +118,9 @@ class MayaActions(HookBaseClass):
         # resolve path
         path = self.get_publish_path(sg_publish_data)
         
+        if name == "open":
+            self._openScene(path, sg_publish_data)
+
         if name == "reference":
             self._create_reference(path, sg_publish_data)
 
@@ -123,7 +132,23 @@ class MayaActions(HookBaseClass):
             
         if name == "udim_texture_node":
             self._create_udim_texture_node(path, sg_publish_data)
-                        
+    
+    # Custom buttons functions by Vipul Rathod
+
+    def _openScene(self, path, sg_publish_data):
+        """
+        Create a reference with the same settings Maya would use
+        if you used the create settings dialog.
+        
+        :param path: Path to file.
+        :param sg_publish_data: Shotgun data dictionary with all the standard publish fields.
+        """
+        import maya.cmds as cmds
+
+        if not os.path.exists(path):
+            raise Exception("File not found on disk - '%s'" % path)
+                
+        cmds.file(path, o = True, f = True)                    
            
     ##############################################################################################################
     # helper methods which can be subclassed in custom hooks to fine tune the behaviour of things

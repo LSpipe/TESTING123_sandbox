@@ -16,12 +16,12 @@ configuration:
     # UI customization
     menu_name:
         type: str
-        default_value: "Custom Load"
+        default_value: "Loader"
         description: Name to appear on the Shotgun menu.
 
     title_name:
         type: str
-        default_value: "Custom Loader"
+        default_value: "Loader"
         description: Name to appear on the title of the UI Dialog.
 
 
@@ -61,7 +61,7 @@ configuration:
             Rendered Image: [read_node]
             Nuke Script: [script_import]
         default_value_tk-maya:
-            Maya Scene: [reference, import]
+            Maya Scene: [open, reference, import]
             Rendered Image: [texture_node]
             Photoshop Image: [texture_node]
             UDIM Image: [udim_texture_node]
@@ -78,7 +78,7 @@ configuration:
         default_value:
             - caption: Assets
               entity_type: Asset
-              publish_filters: []
+              publish_filters: [task.Task.step.Step.short_name, is, 'Rigging']
               filters:
               - ["project", "is", "{context.project}"]
               hierarchy: [sg_asset_type, code]
