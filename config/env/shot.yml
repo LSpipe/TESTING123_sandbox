@@ -49,7 +49,7 @@ engines:
     apps:
       tk-multi-about: '@about'
       tk-multi-screeningroom: '@launch_screeningroom'
-      tk-multi-workfiles: '@workfiles-launch-at-startup'
+      tk-multi-workfiles: '@workfiles'
       tk-custom-loader: '@tk-custom-loader'
     compatibility_dialog_min_version: 2015
     debug_logging: false

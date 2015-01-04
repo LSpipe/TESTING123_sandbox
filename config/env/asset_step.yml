@@ -440,7 +440,7 @@ engines:
         hook_filter_publishes: default
         hook_filter_work_files: default
         hook_scene_operation: default
-        launch_at_startup: true
+        launch_at_startup: false
         launch_change_work_area_at_startup: false
         location: {name: tk-multi-workfiles, type: app_store, version: v0.6.0}
         saveas_default_name: scene
